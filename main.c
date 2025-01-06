@@ -4,7 +4,7 @@
  */
 
 
-main()
+void main(void)
 {
 	while (1);
 }
