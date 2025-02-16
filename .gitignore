@@ -1,0 +1,7 @@
+*.dep
+*.stp
+*.vscode
+Debug
+Release
+TAGS_Filelist.txt
+TAGS.txt
