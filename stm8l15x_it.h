@@ -6,5 +6,6 @@
 
 void _stext(void); /* RESET startup routine */
 INTERRUPT void NonHandledInterrupt(void);
+INTERRUPT void EXTIB_G_IRQHandler(void); /* EXTI PORTB / EXTI PORTG */
 
 #endif /* __STM8L15x_IT_H */

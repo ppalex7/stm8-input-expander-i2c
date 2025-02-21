@@ -1,5 +1,7 @@
 #include "stm8l15x.h"
 
+volatile uint8_t InputState;
+
 void main(void)
 {
 	// set PORT B external interrupt sensivity to "rising and falling edge"
@@ -11,7 +13,12 @@ void main(void)
 	// enable interrupts for PB4-PB7
 	GPIOB->CR2 |= 0b11110000;
 
-	enableInterrupts();
+	// configure PC4 as output
+	GPIOC->DDR |= (0b1 << 4);
+	// configure PC4 as push-pull
+	GPIOC->CR1 |= (0b1 << 4);
+
+    enableInterrupts();
 
 	while (1);
 }
