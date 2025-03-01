@@ -1,6 +1,8 @@
 *.dep
+*.pdb
 *.stp
 *.vscode
+checkres.spy
 Debug
 Release
 TAGS_Filelist.txt
