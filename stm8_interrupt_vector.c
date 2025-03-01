@@ -16,16 +16,16 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, NonHandledInterrupt}, /* irq3  */
 	{0x82, NonHandledInterrupt}, /* irq4  */
 	{0x82, NonHandledInterrupt}, /* irq5  */
-	{0x82, EXTIB_G_IRQHandler}, /* irq6  */
+	{0x82, NonHandledInterrupt}, /* irq6  */
 	{0x82, NonHandledInterrupt}, /* irq7  */
 	{0x82, NonHandledInterrupt}, /* irq8  */
 	{0x82, NonHandledInterrupt}, /* irq9  */
 	{0x82, NonHandledInterrupt}, /* irq10 */
 	{0x82, NonHandledInterrupt}, /* irq11 */
-	{0x82, NonHandledInterrupt}, /* irq12 */
-	{0x82, NonHandledInterrupt}, /* irq13 */
-	{0x82, NonHandledInterrupt}, /* irq14 */
-	{0x82, NonHandledInterrupt}, /* irq15 */
+	{0x82, EXTI4567_IRQHandler}, /* irq12 */
+	{0x82, EXTI4567_IRQHandler}, /* irq13 */
+	{0x82, EXTI4567_IRQHandler}, /* irq14 */
+	{0x82, EXTI4567_IRQHandler}, /* irq15 */
 	{0x82, NonHandledInterrupt}, /* irq16 */
 	{0x82, NonHandledInterrupt}, /* irq17 */
 	{0x82, NonHandledInterrupt}, /* irq18 */

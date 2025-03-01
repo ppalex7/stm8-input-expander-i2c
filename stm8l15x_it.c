@@ -8,13 +8,13 @@ INTERRUPT_HANDLER(NonHandledInterrupt,0)
     return;
 }
 
-INTERRUPT_HANDLER(EXTIB_G_IRQHandler, 6)
+INTERRUPT_HANDLER(EXTI4567_IRQHandler, 12-15)
 {
     InputState = (uint8_t) ((uint8_t)(~GPIOB->IDR) & 0b11110000);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
     // clear pending interrupt bit
-    EXTI->SR2 |= (0b1 << 0);
+    EXTI->SR1 = 0b11110000;
 }
 
 INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
