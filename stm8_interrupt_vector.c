@@ -39,5 +39,5 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, NonHandledInterrupt}, /* irq26 */
 	{0x82, NonHandledInterrupt}, /* irq27 */
 	{0x82, NonHandledInterrupt}, /* irq28 */
-	{0x82, NonHandledInterrupt}, /* irq29 */
+	{0x82, I2C1_SPI2_IRQHandler}, /* irq29 */
 };
