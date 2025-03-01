@@ -10,7 +10,7 @@ INTERRUPT_HANDLER(NonHandledInterrupt,0)
 
 INTERRUPT_HANDLER(EXTIB_G_IRQHandler, 6)
 {
-    InputState = (uint8_t) (GPIOB->IDR & 0b11110000);
+    InputState = (uint8_t) ((uint8_t)(~GPIOB->IDR) & 0b11110000);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
 }
