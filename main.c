@@ -3,17 +3,30 @@
 #define I2C_ADDRESS 0x68
 // on Arduino it would be 0x34 (>>1)
 
-volatile uint8_t InputState;
+volatile uint16_t InputState;
 
 void main(void)
 {
-	// set PortX 7654 external interrupt sensivity to "rising and falling edge"
-    EXTI->CR2 |= (0b11 << 6) | (0b11 << 4) | (0b11 << 2) | (0b11 << 0);
-	// PB[7:4] are used for EXTI7-EXTI4 interrupt generation
-	EXTI->CONF1 &= (uint8_t)(~ EXTI_CONF1_PBHIS);
+    // set PortX 0 external interrupt sensivity to "rising and falling edge"
+    EXTI->CR1 |= (0b11 << 0);
+    // set PortX 765 external interrupt sensivity to "rising and falling edge"
+    EXTI->CR2 |= (0b11 << 6) | (0b11 << 4) | (0b11 << 2);
+    // set PORT D external interrupt sensivity to "rising and falling edge"
+    EXTI->CR3 |= (0b11 << 2);
 
-	// enable interrupts for PB4-PB7
-	GPIOB->CR2 |= 0b11110000;
+    // PB[7:4] are used for EXTI7-EXTI4 interrupt generation
+    // PB[3:0] are used for EXTI3-EXTI0 interrupt generation
+    // PD[3:0] are used for EXTID interrupt generation
+    // reset the appropriate bits
+    EXTI->CONF1 &= (uint8_t)(~(EXTI_CONF1_PDLIS | EXTI_CONF1_PBHIS | EXTI_CONF1_PBLIS));
+    // then set the necessary ones
+    EXTI->CONF1 |= EXTI_CONF1_PDLIS;
+    // or just assign 0b00000100 to CONF1 if we don't care previous value
+
+    // enable interrupts for PB0, PB5-PB7
+    GPIOB->CR2 |= 0b11100001;
+    // enable interrupts for PD0
+    GPIOD->CR2 |= (0b1 << 0);
 
     // configure PC4 as output
     GPIOC->DDR |= (0b1 << 4);
