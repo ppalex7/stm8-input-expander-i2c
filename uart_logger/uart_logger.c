@@ -104,6 +104,11 @@ void on_dma_log_transfer_complete(void)
             }
         }
         idx--;
+        if (drops && idx < (BUFFER_MESSAGES_COUNT - 1) / 2)
+        {
+            logf("...truncated %d messages\n", drops);
+            drops = 0;
+        }
         length = 0;
         // end critical section
 
