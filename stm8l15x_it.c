@@ -35,9 +35,9 @@ INTERRUPT_HANDLER(EXTID_H_IRQHandler, 7)
 
 INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
 {
-    static uint16_t data;
-    static uint16_t dataCopy;
-    static uint8_t bytesSent;
+    static uint16_t tx;
+    static uint16_t sending_input_state;
+    static uint8_t bytes_sent;
 
     uint8_t sr1;
     uint8_t sr3;
@@ -58,17 +58,17 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
         if (sr1 == (I2C_SR1_TXE | I2C_SR1_ADDR))
         {
             // address matched
-            data = g_input_state;
-            dataCopy = data;
-            bytesSent = 0;
+            tx = g_input_state;
+            sending_input_state = tx;
+            bytes_sent = 0;
         }
         else if (sr1 == I2C_SR1_TXE || sr1 == (I2C_SR1_TXE | I2C_SR1_BTF))
         {
             // data register empty
-            I2C1->DR = (uint8_t)data;
-            data = data >> 8;
-            bytesSent++;
-            if (bytesSent >= 2 && dataCopy == g_input_state)
+            I2C1->DR = (uint8_t)tx;
+            tx = tx >> 8;
+            bytes_sent++;
+            if (bytes_sent >= 2 && sending_input_state == g_input_state)
             {
                 // actual data was send, clear flag
                 GPIOC->ODR &= (uint8_t)~(0b1 << 4);
