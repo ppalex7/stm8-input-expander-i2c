@@ -68,7 +68,7 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
             I2C1->DR = (uint8_t)tx;
             tx = tx >> 8;
             bytes_sent++;
-            if (bytes_sent >= 2 && sending_input_state == g_input_state)
+            if (bytes_sent == sizeof(tx) && sending_input_state == g_input_state)
             {
                 // actual data was send, clear flag
                 GPIOC->ODR &= (uint8_t)~(0b1 << 4);
