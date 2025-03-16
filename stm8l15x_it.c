@@ -1,7 +1,7 @@
 #include "stm8l15x_it.h"
 #include "stm8l15x.h"
 
-extern volatile uint16_t InputState;
+extern volatile uint16_t g_input_state;
 // ( PORTD_BUTTONS << 8 ) | PORTB_BUTTONS
 
 INTERRUPT_HANDLER(NonHandledInterrupt,0)
@@ -14,7 +14,7 @@ INTERRUPT_HANDLER(EXTI0567_IRQHandler, 8_13-15)
     uint8_t current;
     current = (uint8_t)((uint8_t)(~GPIOB->IDR) & 0b11100001);
     // pack into bits 7-0
-    InputState = current | (InputState & 0xFF00);
+    g_input_state = current | (g_input_state & 0xFF00);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
     // clear pending interrupt bit
@@ -26,7 +26,7 @@ INTERRUPT_HANDLER(EXTID_H_IRQHandler, 7)
     uint8_t current;
     current = (uint8_t)((uint8_t)(~GPIOD->IDR) & 0b00000001);
     // pack into bits 15-8
-    InputState = (current << 8) | (InputState & 0x00FF);
+    g_input_state = (current << 8) | (g_input_state & 0x00FF);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
     // clear pending interrupt bit PDF
@@ -58,7 +58,7 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
         if (sr1 == (I2C_SR1_TXE | I2C_SR1_ADDR))
         {
             // address matched
-            data = InputState;
+            data = g_input_state;
             dataCopy = data;
             bytesSent = 0;
         }
@@ -68,7 +68,7 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
             I2C1->DR = (uint8_t)data;
             data = data >> 8;
             bytesSent++;
-            if (bytesSent >= 2 && dataCopy == InputState)
+            if (bytesSent >= 2 && dataCopy == g_input_state)
             {
                 // actual data was send, clear flag
                 GPIOC->ODR &= (uint8_t)~(0b1 << 4);

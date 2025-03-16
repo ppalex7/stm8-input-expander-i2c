@@ -3,7 +3,7 @@
 #define I2C_ADDRESS 0x68
 // on Arduino it would be 0x34 (>>1)
 
-volatile uint16_t InputState;
+volatile uint16_t g_input_state;
 
 void main(void)
 {
