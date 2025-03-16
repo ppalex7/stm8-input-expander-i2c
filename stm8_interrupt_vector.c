@@ -12,7 +12,7 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, NonHandledInterrupt}, /* trap  */
 	{0x82, NonHandledInterrupt}, /* irq0  */
 	{0x82, NonHandledInterrupt}, /* irq1  */
-	{0x82, NonHandledInterrupt}, /* irq2  */
+	{0x82, DMA1_CHANNEL0_1_IRQHandler}, /* irq2  */
 	{0x82, NonHandledInterrupt}, /* irq3  */
 	{0x82, NonHandledInterrupt}, /* irq4  */
 	{0x82, NonHandledInterrupt}, /* irq5  */

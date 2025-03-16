@@ -1,4 +1,5 @@
 #include "stm8l15x_it.h"
+#include "uart_logger.h"
 #include "stm8l15x.h"
 
 extern volatile uint16_t g_input_state;
@@ -17,6 +18,7 @@ INTERRUPT_HANDLER(EXTI0567_IRQHandler, 8 /*13-15*/)
     g_input_state = new_state_low | (g_input_state & 0xFF00);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
+    logf("EXTI0567 handler: new state 0x%04hX\n", g_input_state);
     // clear pending interrupt bit
     EXTI->SR1 = 0b11100001;
 }
@@ -29,6 +31,7 @@ INTERRUPT_HANDLER(EXTID_H_IRQHandler, 7)
     g_input_state = (new_state_high << 8) | (g_input_state & 0x00FF);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
+    logf("EXTID handler: new state 0x%04hX\n", g_input_state);
     // clear pending interrupt bit PDF
     EXTI->SR2 = 0b00000010;
 }
@@ -51,6 +54,7 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
     }
     sr1 = I2C1->SR1;
     sr3 = I2C1->SR3;
+    logf("I2C event, SR1_SR3 values: 0x%04hX\n", (sr1 << 8) | sr3);
 
     if (sr3 == (I2C_SR3_TRA | I2C_SR3_BUSY))
     {
@@ -70,15 +74,26 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
                 I2C1->DR = (uint8_t)tx;
                 tx = tx >> 8;
                 bytes_sent++;
+                logf("I2C: %d bytes sent\n", bytes_sent);
             }
             else
             {
                 if (sending_input_state == g_input_state)
                 {
                     // actual data was sent, clear flag
+                    log("I2C: actual state transmitted, turn off \"pending request\" flag\n");
                     GPIOC->ODR &= (uint8_t)~(0b1 << 4);
+                }
+                else
+                {
+                    log("I2C: stale state transmitted, keep \"pending request\" flag on\n");
                 }
             }
         }
     }
+}
+
+INTERRUPT_HANDLER(DMA1_CHANNEL0_1_IRQHandler, 2)
+{
+    on_dma_log_transfer_complete();
 }

@@ -1,4 +1,5 @@
 #include "stm8l15x.h"
+#include "uart_logger.h"
 
 #define I2C_ADDRESS 0x68
 // on Arduino it would be 0x34 (>>1)
@@ -51,7 +52,15 @@ void main(void)
     // Enable I2C buffer, event and error interrupts
     I2C1->ITR = I2C_ITR_ITBUFEN | I2C_ITR_ITEVTEN | I2C_ITR_ITERREN;
 
+    // set UART BaudRate to 19200, so divider 2000000/19200 = 104 = 0x68 = 0b1101000
+    configure_logger_peripheral(0x68u);
+
     enableInterrupts();
 
-	while (1);
+    log("device configured\n");
+
+    while (1)
+    {
+        process_buffered_logs();
+    }
 }
