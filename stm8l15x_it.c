@@ -4,12 +4,12 @@
 extern volatile uint16_t g_input_state;
 // ( PORTD_BUTTONS << 8 ) | PORTB_BUTTONS
 
-INTERRUPT_HANDLER(NonHandledInterrupt,0)
+INTERRUPT_HANDLER(NonHandledInterrupt, 0)
 {
     return;
 }
 
-INTERRUPT_HANDLER(EXTI0567_IRQHandler, 8_13-15)
+INTERRUPT_HANDLER(EXTI0567_IRQHandler, 8 /*13-15*/)
 {
     uint8_t new_state_low;
     new_state_low = (uint8_t)((uint8_t)(~GPIOB->IDR) & 0b11100001);
