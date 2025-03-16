@@ -43,15 +43,28 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
     static uint8_t bytes_sent;
 
     uint8_t sr1;
+    uint8_t sr2;
     uint8_t sr3;
 
     // Check for errors
-    if (I2C1->SR2)
+    sr2 = I2C1->SR2;
+    if (sr2)
     {
         // Reset error
         I2C1->SR2 = 0;
-        // TODO: turn on error-LED
+
+        if (sr2 & I2C_SR2_AF && bytes_sent == sizeof(tx))
+        {
+            // EV3_2
+            // not a bug
+            return;
+        }
+        else
+        {
+            logf("I2C error, SR2: 0x%02hX\n", sr2);
+        }
     }
+
     sr1 = I2C1->SR1;
     sr3 = I2C1->SR3;
     logf("I2C event, SR1_SR3 values: 0x%04hX\n", (sr1 << 8) | sr3);
