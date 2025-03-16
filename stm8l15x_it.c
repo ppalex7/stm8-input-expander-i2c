@@ -65,13 +65,19 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
         else if (sr1 == I2C_SR1_TXE || sr1 == (I2C_SR1_TXE | I2C_SR1_BTF))
         {
             // data register empty
-            I2C1->DR = (uint8_t)tx;
-            tx = tx >> 8;
-            bytes_sent++;
-            if (bytes_sent == sizeof(tx) && sending_input_state == g_input_state)
+            if (bytes_sent < sizeof(tx))
             {
-                // actual data was send, clear flag
-                GPIOC->ODR &= (uint8_t)~(0b1 << 4);
+                I2C1->DR = (uint8_t)tx;
+                tx = tx >> 8;
+                bytes_sent++;
+            }
+            else
+            {
+                if (sending_input_state == g_input_state)
+                {
+                    // actual data was sent, clear flag
+                    GPIOC->ODR &= (uint8_t)~(0b1 << 4);
+                }
             }
         }
     }
