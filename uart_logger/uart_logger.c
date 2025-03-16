@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <processor.h>
 
-#define BUFFER_MESSAGES_COUNT 5u
+#define BUFFER_MESSAGES_COUNT 16u
 #define USART_DR (USART1_BASE + 0x01)
 
 @near unsigned char g_uart_tx_buffer[128];
