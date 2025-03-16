@@ -1,6 +1,7 @@
 #include "uart_logger.h"
 #include "stm8l15x.h"
 #include <stdio.h>
+#include <processor.h>
 
 #define BUFFER_MESSAGES_COUNT 5u
 #define USART_DR (USART1_BASE + 0x01)
@@ -40,6 +41,7 @@ void configure_logger_peripheral(unsigned short clock_divider)
 
 void logf(@near char *fmt, uint16_t arg)
 {
+    bool restore_interrupts = 0;
     if (*fmt == '\0')
     {
         // reject empty string
@@ -52,18 +54,39 @@ void logf(@near char *fmt, uint16_t arg)
         return;
     }
 
+    if (!imask())
+    {
+        restore_interrupts = 1;
+        disableInterrupts();
+    }
+
+    // begin critical section
     msg_format[idx] = fmt;
     msg_arg[idx] = arg;
     idx++;
+    // end critical section
+
+    if (restore_interrupts)
+    {
+        enableInterrupts();
+    }
 }
 
 void on_dma_log_transfer_complete(void)
 {
     uint8_t i;
     uint8_t max_idx;
+    bool restore_interrupts = 0;
 
     if (DMA1_Channel1->CSPR & DMA_CSPR_TCIF)
     {
+        if (!imask())
+        {
+            restore_interrupts = 1;
+            disableInterrupts();
+        }
+
+        // begin critical section
         max_idx = (uint8_t)((idx > BUFFER_MESSAGES_COUNT - 1)
                                 ? BUFFER_MESSAGES_COUNT - 1
                                 : idx);
@@ -82,6 +105,11 @@ void on_dma_log_transfer_complete(void)
         }
         idx--;
         length = 0;
+        // end critical section
+
+        if (restore_interrupts) {
+            enableInterrupts();
+        }
 
         DMA1_Channel1->CSPR &= (uint8_t)~DMA_CSPR_TCIF;
     }
