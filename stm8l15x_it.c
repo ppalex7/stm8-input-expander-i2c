@@ -11,10 +11,10 @@ INTERRUPT_HANDLER(NonHandledInterrupt,0)
 
 INTERRUPT_HANDLER(EXTI0567_IRQHandler, 8_13-15)
 {
-    uint8_t current;
-    current = (uint8_t)((uint8_t)(~GPIOB->IDR) & 0b11100001);
+    uint8_t new_state_low;
+    new_state_low = (uint8_t)((uint8_t)(~GPIOB->IDR) & 0b11100001);
     // pack into bits 7-0
-    g_input_state = current | (g_input_state & 0xFF00);
+    g_input_state = new_state_low | (g_input_state & 0xFF00);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
     // clear pending interrupt bit
@@ -23,10 +23,10 @@ INTERRUPT_HANDLER(EXTI0567_IRQHandler, 8_13-15)
 
 INTERRUPT_HANDLER(EXTID_H_IRQHandler, 7)
 {
-    uint8_t current;
-    current = (uint8_t)((uint8_t)(~GPIOD->IDR) & 0b00000001);
+    uint8_t new_state_high;
+    new_state_high = (uint8_t)((uint8_t)(~GPIOD->IDR) & 0b00000001);
     // pack into bits 15-8
-    g_input_state = (current << 8) | (g_input_state & 0x00FF);
+    g_input_state = (new_state_high << 8) | (g_input_state & 0x00FF);
     // Raise PC4 as "incoming request pending" flag
     GPIOC->ODR |= (0b1 << 4);
     // clear pending interrupt bit PDF
