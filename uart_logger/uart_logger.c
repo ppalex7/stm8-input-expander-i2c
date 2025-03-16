@@ -40,6 +40,11 @@ void configure_logger_peripheral(unsigned short clock_divider)
 
 void logf(@near char *fmt, uint16_t arg)
 {
+    if (*fmt == '\0')
+    {
+        // reject empty string
+        return;
+    }
     if (idx > BUFFER_MESSAGES_COUNT - 1)
     {
         // buffer is full, drop message
