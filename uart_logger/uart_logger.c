@@ -9,7 +9,7 @@
 static volatile uint8_t length = 0;
 // 2-byte index produces less code for array addressing;
 static volatile uint16_t idx = 0;
-static unsigned char drops = 0;
+static volatile uint16_t drops = 0;
 static volatile char *msg_format[BUFFER_MESSAGES_COUNT] = {0};
 static volatile short msg_arg[BUFFER_MESSAGES_COUNT];
 
