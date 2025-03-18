@@ -7,7 +7,7 @@
 #define USART_DR (USART1_BASE + 0x01)
 
 @near unsigned char g_uart_tx_buffer[128];
-static volatile uint8_t length = 0;
+static volatile uint16_t length = 0;
 // 2-byte index produces less code for array addressing;
 static volatile uint16_t idx = 0;
 static volatile uint16_t drops = 0;
@@ -128,7 +128,7 @@ void process_buffered_logs(void)
         return;
     }
 
-    length = (uint8_t)sprintf(g_uart_tx_buffer, msg_format[0], msg_arg[0]);
+    printf(msg_format[0], msg_arg[0]);
 
     // disable channel
     DMA1_Channel1->CCR &= (uint8_t)~DMA_CCR_CE;
@@ -137,10 +137,22 @@ void process_buffered_logs(void)
     DMA1_Channel1->CM0ARH = (uint8_t)(((uint16_t)g_uart_tx_buffer) >> (uint8_t)8);
     DMA1_Channel1->CM0ARL = (uint8_t)(((uint16_t)g_uart_tx_buffer));
 
-    DMA1_Channel1->CNBTR = length;
+    DMA1_Channel1->CNBTR = (uint8_t) length;
 
     // trigger UART
     USART1->SR &= (uint8_t)(~USART_SR_TC);
     // enable channel
     DMA1_Channel1->CCR |= DMA_CCR_CE;
 }
+
+char putchar(char c) {
+   if (length >= sizeof(g_uart_tx_buffer) ) {
+        return 0;
+    }
+
+    g_uart_tx_buffer[length] = c;
+    length++;
+
+    return c;
+}
+
