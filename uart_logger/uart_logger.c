@@ -74,7 +74,7 @@ void logf(@near char *fmt, uint16_t arg)
 
 void on_dma_log_transfer_complete(void)
 {
-    uint8_t i;
+    uint16_t i;
     uint8_t max_idx;
     bool restore_interrupts = 0;
 
