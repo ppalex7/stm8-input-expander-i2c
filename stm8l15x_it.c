@@ -69,7 +69,7 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
 
     sr1 = I2C1->SR1;
     sr3 = I2C1->SR3;
-    logf("I2C event, SR1_SR3 values: 0x%04hX\n", (sr1 << 8) | sr3);
+    logf("I2C event, SR1_SR3: 0x%04hX\n", (sr1 << 8) | sr3);
 
     // process S3 ignoring busy bit
     sr3 &= (uint8_t) (~I2C_SR3_BUSY);
