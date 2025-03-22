@@ -42,6 +42,8 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
     static uint16_t sending_input_state;
     static uint8_t bytes_sent;
 
+    uint8_t rx;
+
     uint8_t sr1;
     uint8_t sr2;
     uint8_t sr3;
@@ -102,6 +104,25 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
                     log("I2C: stale state transmitted, keep \"pending request\" flag on\n");
                 }
             }
+        }
+    }
+    if (sr3 == I2C_SR3_BUSY)
+    {
+        // receiver
+        // do noting on address matched (sr1 & I2C_SR1_ADDR)
+        if (sr1 & I2C_SR1_RXNE)
+        {
+            // data register empty
+            rx = I2C1->DR;
+            logf("I2C: received 0x%02hX, update PORTB\n", rx);
+            rx &= 0b00011110;
+            // we can overwrite other pins because they configured as input.
+            GPIOB->ODR = rx;
+        }
+        if (sr1 & I2C_SR1_STOPF)
+        {
+            // EV4 (stop condition). respond with ack
+            I2C1->CR2 |= I2C_CR2_ACK;
         }
     }
 }

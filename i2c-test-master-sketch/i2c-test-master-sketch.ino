@@ -57,6 +57,9 @@ void loop() {
       case 'A':
         autoReq = false;
         break;
+      case 'l':
+        i2c_255(STM_I2C_ADDR);
+        break;
     }
   }
   if (iFlag) {
@@ -125,4 +128,16 @@ void i2c_scan() {
   Serial.print("Found ");
   Serial.print(count, DEC);
   Serial.println(F(" device(s)."));
+}
+
+void i2c_255(uint8_t addr) {
+  for (uint8_t b = 0; b < 255; b++) {
+    Serial.print("sending ");
+    Serial.print(b, HEX);
+    Serial.print(" to ");
+    Serial.println(addr, HEX);
+    Wire.beginTransmission(addr);
+    Wire.write(b);
+    Wire.endTransmission();
+  }
 }
