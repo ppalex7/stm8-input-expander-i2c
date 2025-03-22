@@ -77,14 +77,14 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
     if (sr3 == I2C_SR3_TRA)
     {
         // transmitter
-        if (sr1 == (I2C_SR1_TXE | I2C_SR1_ADDR))
+        if (sr1 & I2C_SR1_ADDR)
         {
             // address matched
             tx = g_input_state;
             sending_input_state = tx;
             bytes_sent = 0;
         }
-        else if (sr1 == I2C_SR1_TXE || sr1 == (I2C_SR1_TXE | I2C_SR1_BTF))
+        if (sr1 & I2C_SR1_TXE)
         {
             // data register empty
             if (bytes_sent < sizeof(tx))
