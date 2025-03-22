@@ -71,7 +71,10 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
     sr3 = I2C1->SR3;
     logf("I2C event, SR1_SR3 values: 0x%04hX\n", (sr1 << 8) | sr3);
 
-    if (sr3 == (I2C_SR3_TRA | I2C_SR3_BUSY))
+    // process S3 ignoring busy bit
+    sr3 &= (uint8_t) (~I2C_SR3_BUSY);
+
+    if (sr3 == I2C_SR3_TRA)
     {
         // transmitter
         if (sr1 == (I2C_SR1_TXE | I2C_SR1_ADDR))
@@ -106,7 +109,7 @@ INTERRUPT_HANDLER(I2C1_SPI2_IRQHandler, 29)
             }
         }
     }
-    if (sr3 == I2C_SR3_BUSY)
+    if (sr3 == 0)
     {
         // receiver
         // do noting on address matched (sr1 & I2C_SR1_ADDR)
