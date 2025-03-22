@@ -33,6 +33,11 @@ void main(void)
     GPIOC->DDR |= (0b1 << 4);
     // configure PC4 as push-pull
     GPIOC->CR1 |= (0b1 << 4);
+    
+    // configure PB[1:4] as output
+    GPIOB->DDR |= 0b00011110;
+    // configure PB[1:4] as push-pull
+    GPIOB->CR1 |= 0b00011110;
 
     // Feed clock to I2C
     CLK->PCKENR1 |= CLK_PCKENR1_I2C1;
