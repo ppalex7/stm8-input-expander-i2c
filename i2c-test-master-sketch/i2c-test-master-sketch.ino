@@ -15,7 +15,7 @@ void interruptHandler() {
 void setup() {
   while (!Serial)
     ;
-  Serial.begin(9600);
+  Serial.begin(19200);
   Serial.println(F("serial initialized"));
   Wire.begin();
   Serial.println(F("wire initialized"));
