@@ -67,5 +67,6 @@ void main(void)
     while (1)
     {
         process_buffered_logs();
+        wfi();
     }
 }
